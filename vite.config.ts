@@ -1,20 +1,20 @@
 import { defineConfig } from 'vite'
-import { devtools } from '@tanstack/devtools-vite'
-import viteReact from '@vitejs/plugin-react'
+import React from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-
+import { devtools } from '@tanstack/devtools-vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/Zod-zust/',
   plugins: [
     devtools(),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
     }),
-    viteReact(),
+    React(),
     tailwindcss(),
   ],
   resolve: {
@@ -22,5 +22,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: '/zod-zust',
 })
