@@ -8,6 +8,7 @@ import { useState } from "react";
 export default function AddWork() {
   const addWork = userStore((state) => state.addWork)
   const error=userStore((s)=>s.error)
+  const isSuccess=userStore((s)=>s.isSuccess)
   const [title, SetTitle] = useState("")
   const [status, setStatus] = useState<"todo" | "in-progress" | "done">("todo");
   const [discription, setDiscription] = useState("")
@@ -26,6 +27,7 @@ export default function AddWork() {
   return (
     <div className="flex flex-col gap-2 w-full justify-center items-center">
       {error? <p className="text-destructive border border-red-600 rounded-2xl p-3 text-2xl">Please fill all fields</p>:null}
+      {isSuccess? <p className="text-green-600 border border-green-600 rounded-2xl p-3 text-2xl">Work added successfully</p>:null}
       <form onSubmit={handleSubmit} className="w-[20rem]">
         <FieldGroup>
           <Field>
