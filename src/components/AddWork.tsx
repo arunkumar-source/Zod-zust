@@ -1,55 +1,56 @@
-import { Button } from "@/components/ui/button";
+import { userStore } from "../store/userStore";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { useState } from "react";
-import { userStoreState } from "@/store/userStore";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AddWork() {
-  const [inputValue, setInputValue] = useState("");
-  const [id, setid] = useState(0);
-  const addWork = userStoreState((s) => s.addWork);
-  const error = userStoreState((s) => s.error);
-  const removeWork = userStoreState((s) => s.removeWork);
-  const updateWork = userStoreState((s) => s.updateWork);
-
-  const handleAddWork = (e: React.FormEvent) => {
+  const addWork = userStore((state) => state.addWork)
+  const error=userStore((s)=>s.error)
+  const [title, SetTitle] = useState("")
+  const [status, setStatus] = useState<"todo" | "in-progress" | "done">("todo");
+  const [discription, setDiscription] = useState("")
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newId = id + 1;
-    setid(newId);
-    addWork({ id: newId, name: inputValue, checked: false });
-  };
-  return (
-    <div className="flex justify-center items-center">
-      <div className="text-center justify-center">
-        {error && (
-          <div className="text-red-500 w-full h-10 border border-red-500 rounded-2xl p-2">
-            {"An error occurred while adding work,min 1 char"}
-          </div>
-        )}
-        <form className="flex flex-row gap-4 m-9">
-          <Input
-            className="w-100"
-            placeholder="add work"
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <Button onClick={handleAddWork}>Add Work</Button>
-        </form>
-        <div className="flex flex-col gap-2 border border-black p-5 rounded">
-          <div className="text-3xl font-bold">List</div><hr className="border-black"/>
-          {userStoreState((s) => s.works).map((work) => (
-            <div className="flex flex-row gap-5" key={work.id}>
-              <Checkbox className="justify-center mt-3" onCheckedChange={() => updateWork(work.id, {...work, checked: !work.checked? true : false})} />
+    addWork({
+      title, status, discription
+    })
+    SetTitle("");
+    setStatus("todo");
+    setDiscription("")
+  
 
-              <div className="border w-full border-gray-200 p-2 rounded">
-                {work.name} 
-              </div>
-              <Button className="w-fit h-fit" onClick={() => removeWork(work.id)}>
-                Delete
-              </Button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+  };
+
+  return (
+    <div className="flex flex-col gap-2 w-full justify-center items-center">
+      {error? <p className="text-destructive border border-red-600 rounded-2xl p-3 text-2xl">Please fill all fields</p>:null}
+      <form onSubmit={handleSubmit} className="w-[20rem]">
+        <FieldGroup>
+          <Field>
+            <FieldLabel>Title:</FieldLabel>
+            <Input value={title} onChange={(e)=>SetTitle(e.target.value)} type="text" />
+          </Field>
+          <Field>
+            <FieldLabel>Status:</FieldLabel>
+            <NativeSelect value={status} onChange={(e)=>setStatus(e.target.value as 
+              "todo"|"in-progress"|"done"
+            )}>
+              <NativeSelectOption value={"todo"} >Todo</NativeSelectOption>
+              <NativeSelectOption value={"in-progress"}>In-progress</NativeSelectOption>
+              <NativeSelectOption value={"done"}>Done</NativeSelectOption>
+            </NativeSelect>
+          </Field>
+          <Field>
+            <FieldLabel>Description:</FieldLabel>
+            <Input value={discription} onChange={(e)=>setDiscription(e.target.value)} type="text" />
+          </Field>
+          <Field>
+            <Button type="submit" className="">Add Work</Button>
+          </Field>
+        </FieldGroup>
+      </form>
+    </div >
   );
 }

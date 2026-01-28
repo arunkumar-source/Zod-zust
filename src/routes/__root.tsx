@@ -1,5 +1,4 @@
 import { Outlet, createRootRoute, Link } from "@tanstack/react-router";
-
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -15,6 +14,11 @@ export const Route = createRootRoute({
           </NavigationMenuList>
           <NavigationMenuList className="hover:bg-white hover:text-black rounded">
             <Link to="/dash">Dashboard</Link>
+          </NavigationMenuList>
+        </NavigationMenu>
+        <NavigationMenu>
+          <NavigationMenuList className="hover:bg-white hover:text-black rounded">
+            <Link to='/profile'>Profile</Link>
           </NavigationMenuList>
         </NavigationMenu>
       </nav>

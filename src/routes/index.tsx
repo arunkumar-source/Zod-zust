@@ -7,8 +7,8 @@ export const Route = createFileRoute('/')({
 function App() {
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center m-3 italic">What are you working on?</h1>
-      <h2 className="text-lg text-center text-gray-600 m-3">Track your time and stay productive</h2>
+      <h1 className="text-5xl font-semibold text-center m-3 italic">What are you working on?</h1>
+      <h2 className="text-3xl text-center text-gray-600 mb-10">Track your Work and stay productive</h2>
       <AddWork />
     </div>
   )

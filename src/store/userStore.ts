@@ -1,44 +1,44 @@
 import { create } from "zustand";
-import {WorkSchema,type Work } from "@/../schema/schema";
+import { WorkSchema, type Work } from "@/../schema/schema";
 
-interface userState{
-    works:Work[];
-    error:string | null;
-    addWork: (work:Work) => void;
-    removeWork: (id:number) => void;
-    updateWork: (id:number, work:Work) => void;
-    clearError: () => void;
+interface userState {
+    works: Work[];
+    error: string | null;
+    addWork: (task: Omit<Work, "id">) => void;
+    updateWork: (id: number, updates: Partial<Omit<Work, "id">>) => void,
+    removeWork: (id: number) => void
+
 }
 
-export const userStoreState=create<userState>((set)=>({
-    works:[],
-    error:null,
-
-    addWork:(data)=>{
-        const result = WorkSchema.safeParse(data);
-        if (!result.success) {
-            set({ error: result.error.message });
+export const userStore = create<userState>((set, get) => ({
+    works: [],
+    error: null,
+    
+    addWork: (taskInput: Omit<Work, "id">) => {
+        const parse = WorkSchema.omit({ id: true }).safeParse(taskInput);
+        if(!parse.success){
+            set({error:parse.error.message})
             return;
         }
+        const lastId = get().works.length > 0 ? get().works[get().works.length - 1].id : 0;
+        const newWork: Work = { ...parse.data, id: lastId + 1 };
+
         set((state) => ({
-            works: [...state.works, result.data],
-            error: null,
+            works: [...state.works, newWork],
+            error:null
         }));
     },
     
-    removeWork:(id:number)=>{
-        set((state) => ({
-            works: state.works.filter((work) => work.id !== id),
-        }));
+    updateWork: (id: number, updates: Partial<Omit<Work, "id">>) => {
+        const updatedWorks = get().works.map((task) => 
+            task.id === id ? { ...task, ...updates } : task
+        );
+        set({ works: updatedWorks });
     },
-
-    updateWork:(id:number)=>{
+    
+    removeWork: (id: number) => {
         set((state) => ({
-            works: state.works.map((work) => work.id === id ? {...work, checked: work.checked} : work),
+            works: state.works.filter(task => task.id !== id)
         }));
-    },
-    clearError:()=>{
-        set({error:null});
     }
 }));
-

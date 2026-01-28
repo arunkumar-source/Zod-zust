@@ -3,8 +3,9 @@ import { z } from "zod";
 
 export const WorkSchema = z.object({
   id: z.number(),
-  name: z.string().min(1),
-  checked: z.boolean(),
+  title: z.string().min(1),
+  status:z.enum(["todo","in-progress","done"]),
+  discription: z.string().optional(),
 });
 
 export type Work = z.infer<typeof WorkSchema>;
