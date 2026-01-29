@@ -9,18 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as DashRouteImport } from './routes/dash'
+import { Route as PathLessLayoutRouteImport } from './routes/_pathLessLayout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PathLessLayoutDashRouteImport } from './routes/_pathLessLayout.Dash'
+import { Route as PathLessLayoutAddWorkKanbanRouteImport } from './routes/_pathLessLayout.AddWorkKanban'
 
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashRoute = DashRouteImport.update({
-  id: '/dash',
-  path: '/dash',
+const PathLessLayoutRoute = PathLessLayoutRouteImport.update({
+  id: '/_pathLessLayout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -28,51 +23,60 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PathLessLayoutDashRoute = PathLessLayoutDashRouteImport.update({
+  id: '/Dash',
+  path: '/Dash',
+  getParentRoute: () => PathLessLayoutRoute,
+} as any)
+const PathLessLayoutAddWorkKanbanRoute =
+  PathLessLayoutAddWorkKanbanRouteImport.update({
+    id: '/AddWorkKanban',
+    path: '/AddWorkKanban',
+    getParentRoute: () => PathLessLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dash': typeof DashRoute
-  '/profile': typeof ProfileRoute
+  '/AddWorkKanban': typeof PathLessLayoutAddWorkKanbanRoute
+  '/Dash': typeof PathLessLayoutDashRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dash': typeof DashRoute
-  '/profile': typeof ProfileRoute
+  '/AddWorkKanban': typeof PathLessLayoutAddWorkKanbanRoute
+  '/Dash': typeof PathLessLayoutDashRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dash': typeof DashRoute
-  '/profile': typeof ProfileRoute
+  '/_pathLessLayout': typeof PathLessLayoutRouteWithChildren
+  '/_pathLessLayout/AddWorkKanban': typeof PathLessLayoutAddWorkKanbanRoute
+  '/_pathLessLayout/Dash': typeof PathLessLayoutDashRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dash' | '/profile'
+  fullPaths: '/' | '/AddWorkKanban' | '/Dash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dash' | '/profile'
-  id: '__root__' | '/' | '/dash' | '/profile'
+  to: '/' | '/AddWorkKanban' | '/Dash'
+  id:
+    | '__root__'
+    | '/'
+    | '/_pathLessLayout'
+    | '/_pathLessLayout/AddWorkKanban'
+    | '/_pathLessLayout/Dash'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashRoute: typeof DashRoute
-  ProfileRoute: typeof ProfileRoute
+  PathLessLayoutRoute: typeof PathLessLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dash': {
-      id: '/dash'
-      path: '/dash'
-      fullPath: '/dash'
-      preLoaderRoute: typeof DashRouteImport
+    '/_pathLessLayout': {
+      id: '/_pathLessLayout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PathLessLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -82,13 +86,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_pathLessLayout/Dash': {
+      id: '/_pathLessLayout/Dash'
+      path: '/Dash'
+      fullPath: '/Dash'
+      preLoaderRoute: typeof PathLessLayoutDashRouteImport
+      parentRoute: typeof PathLessLayoutRoute
+    }
+    '/_pathLessLayout/AddWorkKanban': {
+      id: '/_pathLessLayout/AddWorkKanban'
+      path: '/AddWorkKanban'
+      fullPath: '/AddWorkKanban'
+      preLoaderRoute: typeof PathLessLayoutAddWorkKanbanRouteImport
+      parentRoute: typeof PathLessLayoutRoute
+    }
   }
 }
 
+interface PathLessLayoutRouteChildren {
+  PathLessLayoutAddWorkKanbanRoute: typeof PathLessLayoutAddWorkKanbanRoute
+  PathLessLayoutDashRoute: typeof PathLessLayoutDashRoute
+}
+
+const PathLessLayoutRouteChildren: PathLessLayoutRouteChildren = {
+  PathLessLayoutAddWorkKanbanRoute: PathLessLayoutAddWorkKanbanRoute,
+  PathLessLayoutDashRoute: PathLessLayoutDashRoute,
+}
+
+const PathLessLayoutRouteWithChildren = PathLessLayoutRoute._addFileChildren(
+  PathLessLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashRoute: DashRoute,
-  ProfileRoute: ProfileRoute,
+  PathLessLayoutRoute: PathLessLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
