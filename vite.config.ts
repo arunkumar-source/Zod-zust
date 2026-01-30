@@ -7,7 +7,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-
   plugins: [
     devtools(),
     tanstackRouter({
@@ -22,7 +21,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
- server: {
+  server: {
     proxy: {
       "/api": {
         target: "http://localhost:8787",
@@ -31,9 +30,4 @@ export default defineConfig({
       },
     },
   },
-    build: {
-    rollupOptions: {
-      external: ['hono']
-    }
-  }
 })
