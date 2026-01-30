@@ -11,7 +11,7 @@ export function WorkCard({ work, index }: { work: Work; index: number }) {
   return (
     <Draggable draggableId={work.id} index={index}>
       {(provided, snapshot) => {
-        console.log(`WorkCard ${work.id} rendering, isDragging: ${snapshot.isDragging}`)
+       
         
         return (
           <div

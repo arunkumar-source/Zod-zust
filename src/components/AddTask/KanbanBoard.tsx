@@ -18,7 +18,7 @@ export function KanbanBoard() {
   }, [loadWorks])
 
   const onDragEnd = async(result: DropResult) => {
-    console.log("Drag ended:", result)
+   
     
     if (!result.destination) {
       console.log("No destination, dropping outside")
