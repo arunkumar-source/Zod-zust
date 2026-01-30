@@ -1,64 +1,82 @@
-const BASE = import.meta.env.PROD ? "/api/works" : "http://localhost:3001"
+interface Work {
+  id: string
+  title: string
+  status: string
+  createdAt: string
+  updatedAt: string
+}
 
-export const fetchWorks = async () => {
-  try {
-    const res = await fetch(BASE)
-    if (!res.ok) throw new Error("fetch failed")
-    return res.json()
-  } catch (error) {
-    console.error("Failed to fetch works:", error)
-    // Return mock data for deployment if API fails
-    return [
-      { id: "1", title: "Sample Task 1", status: "todo", createdAt: new Date().toISOString() },
-      { id: "2", title: "Sample Task 2", status: "inprogress", createdAt: new Date().toISOString() },
-      { id: "3", title: "Sample Task 3", status: "done", createdAt: new Date().toISOString() }
-    ]
-  }
+const STORAGE_KEY = 'workdash_works'
+
+const getWorksFromStorage = (): Work[] => {
+  const stored = localStorage.getItem(STORAGE_KEY)
+  return stored ? JSON.parse(stored) : []
+}
+
+const saveWorksToStorage = (works: Work[]): void => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(works))
+}
+
+export const fetchWorks = async (): Promise<Work[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(getWorksFromStorage())
+    }, 100)
+  })
 }
 
 export const addWork = async (data: {
   title: string
   status: string
-}) => {
-  try {
-    const res = await fetch(BASE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-    if (!res.ok) throw new Error("add failed")
-    return res.json()
-  } catch (error) {
-    console.error("Failed to add work:", error)
-    // Return mock data for deployment if API fails
-    return { id: Date.now().toString(), ...data, createdAt: new Date().toISOString() }
-  }
+}): Promise<Work> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const works = getWorksFromStorage()
+      const newWork: Work = {
+        id: Date.now().toString(),
+        title: data.title,
+        status: data.status,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+      works.push(newWork)
+      saveWorksToStorage(works)
+      resolve(newWork)
+    }, 100)
+  })
 }
 
-export const updateWork = async (id: string, data: any) => {
-  try {
-    const res = await fetch(`${BASE}/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-    if (!res.ok) throw new Error("update failed")
-    return res.json()
-  } catch (error) {
-    console.error("Failed to update work:", error)
-    // Return mock data for deployment if API fails
-    return { id, ...data, updatedAt: new Date().toISOString() }
-  }
+export const updateWork = async (id: string, data: any): Promise<Work> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const works = getWorksFromStorage()
+      const index = works.findIndex(work => work.id === id)
+      if (index === -1) {
+        reject(new Error("Work not found"))
+        return
+      }
+      works[index] = {
+        ...works[index],
+        ...data,
+        updatedAt: new Date().toISOString()
+      }
+      saveWorksToStorage(works)
+      resolve(works[index])
+    }, 100)
+  })
 }
 
-export const deleteWork = async (id: string) => {
-  try {
-    const res = await fetch(`${BASE}/${id}`, {
-      method: "DELETE",
-    })
-    if (!res.ok) throw new Error("delete failed")
-  } catch (error) {
-    console.error("Failed to delete work:", error)
-    // Mock success for deployment if API fails
-  }
+export const deleteWork = async (id: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const works = getWorksFromStorage()
+      const filteredWorks = works.filter(work => work.id !== id)
+      if (filteredWorks.length === works.length) {
+        reject(new Error("Work not found"))
+        return
+      }
+      saveWorksToStorage(filteredWorks)
+      resolve()
+    }, 100)
+  })
 }
