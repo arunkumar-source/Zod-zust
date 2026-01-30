@@ -12,20 +12,43 @@ interface Props {
 
 export function KanbanColumn({ title, status, works }: Props) {
   return (
-    <Card className="p-4">
-      <h2 className="font-semibold mb-4">{title}</h2>
+    <Card className="p-4 transition-all duration-200 hover:shadow-lg">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-semibold text-gray-800">{title}</h2>
+        <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+          {works.length}
+        </span>
+      </div>
 
       <Droppable droppableId={status}>
-        {(p) => (
+        {(provided, snapshot) => (
           <div
-            ref={p.innerRef}
-            {...p.droppableProps}
-            className="space-y-3 min-h-[300px]"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`space-y-2 min-h-[400px] p-2 rounded-lg transition-all duration-200 ${
+              snapshot.isDraggingOver
+                ? 'bg-blue-50 border-2 border-dashed border-blue-300'
+                : 'bg-gray-50 border-2 border-dashed border-gray-200'
+            }`}
           >
+            {works.length === 0 && !snapshot.isDraggingOver && (
+              <div className="text-center py-8 text-gray-400">
+                <p className="text-sm">No tasks yet</p>
+                <p className="text-xs mt-1">Drag tasks here</p>
+              </div>
+            )}
+            
+            {works.length === 0 && snapshot.isDraggingOver && (
+              <div className="text-center py-8 text-blue-400">
+                <p className="text-sm font-medium">Drop task here</p>
+              </div>
+            )}
+
             {works.map((work, index) => (
               <WorkCard key={work.id} work={work} index={index} />
             ))}
-            {p.placeholder}
+            
+            {provided.placeholder}
           </div>
         )}
       </Droppable>

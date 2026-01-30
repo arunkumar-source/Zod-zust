@@ -3,8 +3,6 @@ import { useWorkStore } from "@/store/userStore"
 import { KanbanColumn } from "./KanbanColoumn"
 import { useEffect } from "react"
 
-
-
 const COLUMNS = [
   { id: "todo", title: "Todo" },
   { id: "inprogress", title: "In Progress" },
@@ -21,37 +19,58 @@ export function KanbanBoard() {
   const onDragEnd = async(result: DropResult) => {
     if (!result.destination) return
 
-    await updateWork(result.draggableId, {
-      status: result.destination.droppableId as any,
-    })
+    const { draggableId, destination, source } = result
+    
+    // Only update if the status actually changed
+    if (source.droppableId !== destination.droppableId) {
+      try {
+        await updateWork(draggableId, {
+          status: destination.droppableId as any,
+        })
+      } catch (error) {
+        console.error('Failed to update work status:', error)
+        // You could show a toast notification here
+      }
+    }
   }
 
   if (loading) {
     return (
-      <div className="text-center p-8">
-        <p>Loading Kanban Board...</p>
-        <p className="text-sm text-gray-500 mt-2">If this message persists, there might be an issue with the components.</p>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading Kanban Board...</p>
+          <p className="text-sm text-gray-400 mt-1">Fetching your tasks</p>
+        </div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="text-center p-8">
-        <p className="text-red-500">{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Refresh
-        </button>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-red-600 font-medium mb-2">Failed to load tasks</p>
+          <p className="text-sm text-gray-500 mb-4">{error}</p>
+          <button 
+            onClick={() => loadWorks()} 
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     )
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {COLUMNS.map((col) => (
           <KanbanColumn
             key={col.id}
