@@ -9,10 +9,18 @@ import { Badge } from "@/components/ui/badge"
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { useWorkStore } from "@/store/userStore"
 import { getStatusData, getDateData } from "@/lib/dashdata"
+import { useEffect } from "react"
 
 
 export default function Dashboard() {
   const works = useWorkStore((s) => s.works)
+  const loadWorks = useWorkStore((s) => s.loadWorks)
+  const loading = useWorkStore((s) => s.loading)
+  const error = useWorkStore((s) => s.error)
+
+  useEffect(() => {
+    loadWorks()
+  }, [loadWorks])
 
   const status = getStatusData(works)
   const dateData = getDateData(works)
@@ -28,6 +36,9 @@ export default function Dashboard() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
 
       {/* STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

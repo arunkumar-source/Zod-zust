@@ -1,82 +1,90 @@
-interface Work {
-  id: string
-  title: string
-  status: string
-  createdAt: string
-  updatedAt: string
-}
+import type { Work } from "@/Schema/validateSchema";
 
-const STORAGE_KEY = 'workdash_works'
 
-const getWorksFromStorage = (): Work[] => {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  return stored ? JSON.parse(stored) : []
-}
+const api = "/api";
 
-const saveWorksToStorage = (works: Work[]): void => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(works))
-}
-
+// Fetch all works
 export const fetchWorks = async (): Promise<Work[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(getWorksFromStorage())
-    }, 100)
-  })
-}
+  try {
+    console.log('Fetching works from:', `${api}`)
+    const response = await fetch(`${api}`, {
+      method: "GET",
+    });
+    
+    console.log('Response status:', response.status)
+    console.log('Response ok:', response.ok)
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Error response:', errorText)
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Fetched data:', data)
+    return data;
+  } catch (error) {
+    console.error("Error fetching works:", error);
+    return [];
+  }
+};
 
-export const addWork = async (data: {
-  title: string
-  status: string
-}): Promise<Work> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const works = getWorksFromStorage()
-      const newWork: Work = {
-        id: Date.now().toString(),
-        title: data.title,
-        status: data.status,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      works.push(newWork)
-      saveWorksToStorage(works)
-      resolve(newWork)
-    }, 100)
-  })
-}
+// Add a new work
+export const addWork = async (data: { title: string; status: Work["status"] }): Promise<Work> => {
+  try {
+    const response = await fetch(`${api}add`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const newWork = await response.json();
+    return newWork;
+  } catch (error) {
+    console.error("Error adding work:", error);
+    throw error;
+  }
+};
 
-export const updateWork = async (id: string, data: any): Promise<Work> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const works = getWorksFromStorage()
-      const index = works.findIndex(work => work.id === id)
-      if (index === -1) {
-        reject(new Error("Work not found"))
-        return
-      }
-      works[index] = {
-        ...works[index],
-        ...data,
-        updatedAt: new Date().toISOString()
-      }
-      saveWorksToStorage(works)
-      resolve(works[index])
-    }, 100)
-  })
-}
+// Update a work
+export const updateWork = async (id: string, data: Partial<Work>): Promise<Work> => {
+  try {
+    const response = await fetch(`${api}update/${id}`, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const updatedWork = await response.json();
+    return updatedWork;
+  } catch (error) {
+    console.error("Error updating work:", error);
+    throw error;
+  }
+};
 
+// Delete a work
 export const deleteWork = async (id: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const works = getWorksFromStorage()
-      const filteredWorks = works.filter(work => work.id !== id)
-      if (filteredWorks.length === works.length) {
-        reject(new Error("Work not found"))
-        return
+  try {
+    const response = await fetch(`${api}delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json'
       }
-      saveWorksToStorage(filteredWorks)
-      resolve()
-    }, 100)
-  })
-}
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Error deleting work:", error);
+    throw error;
+  }
+};
