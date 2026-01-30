@@ -23,6 +23,15 @@ export const fetchWorks = async (): Promise<Work[]> => {
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
     
+    const contentType = response.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Non-JSON response:', text.substring(0, 200));
+      throw new Error('API returned non-JSON response');
+    }
+    
     const data = await response.json();
     console.log('Fetched data:', data)
     
@@ -35,27 +44,8 @@ export const fetchWorks = async (): Promise<Work[]> => {
     return data;
   } catch (error) {
     console.error("Error fetching works:", error);
-    // Return sample data for testing drag and drop
-    return [
-      {
-        id: "test-1",
-        title: "Test Task 1 - Drag me!",
-        status: "todo" as const,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "test-2", 
-        title: "Test Task 2 - In Progress",
-        status: "inprogress" as const,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "test-3",
-        title: "Test Task 3 - Done", 
-        status: "done" as const,
-        createdAt: new Date().toISOString(),
-      }
-    ];
+    // Return empty array if API fails
+    return [];
   }
 };
 
