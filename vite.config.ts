@@ -12,6 +12,7 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
+      generatedRouteTree: './src/routeTree.gen.ts',
     }),
     React(),
     tailwindcss(),
@@ -20,5 +21,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
   },
 })

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { type Work } from "@/Schema/validateSchema"
 import { useWorkStore } from "@/store/userStore"
+import { EditWorkSheet } from "./editSheet"
 
 export function WorkCard({ work, index }: { work: Work; index: number }) {
   const { deleteWork } = useWorkStore()
@@ -21,15 +22,23 @@ export function WorkCard({ work, index }: { work: Work; index: number }) {
               <div className="flex justify-between items-center">
                 <span>{work.title}</span>
 
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => {
-                    deleteWork(work.id)
-                  }}
-                >
-                  Delete
-                </Button>
+                <div className="flex gap-2">
+                  <EditWorkSheet work={work}>
+                    <Button variant="outline" size="sm">
+                      Edit
+                    </Button>
+                  </EditWorkSheet>
+                  
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      deleteWork(work.id)
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
             </Card>
           </div>

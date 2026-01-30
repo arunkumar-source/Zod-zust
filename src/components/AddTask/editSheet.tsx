@@ -6,11 +6,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Button } from "../ui/button"
-import {Input} from "../ui/input"
+import { Button } from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
 
 import { useForm } from "react-hook-form"
-import {useWorkState}  from "@/store/userStore"
+import {useWorkStore}  from "@/store/userStore"
 import {type Work} from "@/Schema/validateSchema"
 
 export function EditWorkSheet({
@@ -20,7 +20,7 @@ export function EditWorkSheet({
   work: Work
   children: React.ReactNode
 }) {
-  const updateWork = useWorkState((s) => s.updateWork)
+  const updateWork = useWorkStore((s) => s.updateWork)
 
   const { register, handleSubmit, formState } = useForm({
     defaultValues: {
