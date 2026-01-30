@@ -9,6 +9,7 @@
     { "src": "/manifest.json", "dest": "/manifest.json" },
     { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/(.*\\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot))", "dest": "/$1" },
-    { "src": "/(.*)", "dest": "/" }
-  ]
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "outputDirectory": "dist"
 }
