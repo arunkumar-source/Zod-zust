@@ -2,7 +2,7 @@
   "name": "server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/serverRun.ts",
+    "dev": "tsx watch ../../api/works.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },

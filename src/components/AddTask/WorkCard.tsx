@@ -1,50 +1,39 @@
 import { Draggable } from "@hello-pangea/dnd"
 import { Card } from "@/components/ui/card"
-import { type Work } from "@/Schema/validateSchema"
-import { EditWorkSheet } from "./editSheet"
+import { Button } from "@/components/ui/button"
+import { type Work } from "@/store/userStore"
 import { useWorkState } from "@/store/userStore"
-import { Button } from "../ui/button"
-export function WorkCard({
-  work,
-  index,
-}: {
-  work: Work
-  index: number
-}) {
+
+export function WorkCard({ work, index }: { work: Work; index: number }) {
   const { deleteWork } = useWorkState()
 
   return (
     <Draggable draggableId={work.id} index={index}>
       {(p) => (
-        <div ref={p.innerRef} {...p.draggableProps}>
-          <Card className="p-3 hover:bg-muted space-y-2">
+        <div
+          ref={p.innerRef}
+          {...p.draggableProps}
+          className="mb-2"
+        >
+          {/* drag handle ONLY here */}
+          <div {...p.dragHandleProps}>
+            <Card className="p-3">
+              <div className="flex justify-between items-center">
+                <span>{work.title}</span>
 
-            {/* Drag handle ONLY */}
-            <div
-              {...p.dragHandleProps}
-              className="font-medium cursor-grab"
-            >
-              {work.title}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex justify-end gap-2">
-              <EditWorkSheet work={work}>
-                <Button variant="outline" size="sm">Edit</Button>
-              </EditWorkSheet>
-              <Button
-                variant="destructive"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  deleteWork(work.id)
-                }}
-              >
-                Delete
-              </Button>
-            </div>
-
-          </Card>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteWork(work.id)
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
       )}
     </Draggable>
