@@ -35,24 +35,23 @@ export const fetchWorks = async (): Promise<Work[]> => {
     return data;
   } catch (error) {
     console.error("Error fetching works:", error);
-    // Return mock data for development if API fails
-    console.warn('Returning mock data due to API failure')
+    // Return sample data for testing drag and drop
     return [
       {
-        id: "1",
-        title: "Sample Task 1",
+        id: "test-1",
+        title: "Test Task 1 - Drag me!",
         status: "todo" as const,
         createdAt: new Date().toISOString(),
       },
       {
-        id: "2", 
-        title: "Sample Task 2",
+        id: "test-2", 
+        title: "Test Task 2 - In Progress",
         status: "inprogress" as const,
         createdAt: new Date().toISOString(),
       },
       {
-        id: "3",
-        title: "Sample Task 3", 
+        id: "test-3",
+        title: "Test Task 3 - Done", 
         status: "done" as const,
         createdAt: new Date().toISOString(),
       }

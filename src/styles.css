@@ -136,3 +136,21 @@ code {
     @apply bg-background text-foreground;
   }
 }
+
+/* Drag and drop styles */
+@layer utilities {
+  .dragging {
+    opacity: 0.8;
+    transform: rotate(5deg);
+  }
+  
+  .drop-zone-active {
+    background-color: rgb(59 130 246 / 0.1);
+    border-color: rgb(59 130 246);
+  }
+  
+  .drag-preview {
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    transform: rotate(2deg);
+  }
+}

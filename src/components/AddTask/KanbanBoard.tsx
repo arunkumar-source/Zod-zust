@@ -13,24 +13,36 @@ export function KanbanBoard() {
   const { works, error, loading, updateWork, loadWorks } = useWorkStore()
 
   useEffect(() => {
+    console.log("KanbanBoard mounted, loading works...")
     loadWorks()
   }, [loadWorks])
 
   const onDragEnd = async(result: DropResult) => {
-    if (!result.destination) return
+    console.log("Drag ended:", result)
+    
+    if (!result.destination) {
+      console.log("No destination, dropping outside")
+      return
+    }
 
     const { draggableId, destination, source } = result
+    
+    console.log(`Moving ${draggableId} from ${source.droppableId} to ${destination.droppableId}`)
     
     // Only update if the status actually changed
     if (source.droppableId !== destination.droppableId) {
       try {
+        console.log("Updating work status...")
         await updateWork(draggableId, {
           status: destination.droppableId as any,
         })
+        console.log("Work status updated successfully")
       } catch (error) {
         console.error('Failed to update work status:', error)
         // You could show a toast notification here
       }
+    } else {
+      console.log("Same destination, no update needed")
     }
   }
 

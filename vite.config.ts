@@ -24,7 +24,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://workbackend-6yl2q0e0v-arun-kumars-projects-67b3a0ee.vercel.app/',
+        target: 'https://workbackend-kw9gpatm1-arun-kumars-projects-67b3a0ee.vercel.app/',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, '')
