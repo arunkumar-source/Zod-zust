@@ -1,16 +1,10 @@
 {
   "framework": "vite",
   "buildCommand": "pnpm build",
-  "outputDirectory": "dist",
-  "functions": {
-    "api/works.ts": {
+  "outputDirectory": "dist" ,
+  "functions":{
+    "api/works.ts":{
       "runtime": "nodejs18.x"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/works",
-      "destination": "/api/works.ts"
-    }
-  ]
-}
+  }
+} 
