@@ -1,4 +1,5 @@
 import { Hono } from "hono"
+import { serve } from "@hono/node-server"
 import { cors } from "hono/cors"
 
 export type Status = "todo" | "inprogress" | "done"
@@ -16,9 +17,10 @@ let works: Work[] = []
 const app = new Hono()
 
 app.use(cors({
-  origin: "*",
+  origin: "http://localhost:5173",
   allowHeaders: ["Content-Type"],
   allowMethods: ["GET", "POST", "PATCH", "DELETE"],
+  credentials: true,
 }))
 
 app.get("/", (c) => {
@@ -56,6 +58,10 @@ app.delete("/:id", (c) => {
   return c.body(null, 204)
 })
 
-export default app
+const port = 3001
+console.log(`Server is running on port ${port}`)
 
-export const handler = app.fetch
+serve({
+  fetch: app.fetch,
+  port
+})

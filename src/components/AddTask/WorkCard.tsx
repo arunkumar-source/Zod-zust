@@ -1,11 +1,11 @@
 import { Draggable } from "@hello-pangea/dnd"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { type Work } from "@/store/userStore"
-import { useWorkState } from "@/store/userStore"
+import { type Work } from "@/Schema/validateSchema"
+import { useWorkStore } from "@/store/userStore"
 
 export function WorkCard({ work, index }: { work: Work; index: number }) {
-  const { deleteWork } = useWorkState()
+  const { deleteWork } = useWorkStore()
 
   return (
     <Draggable draggableId={work.id} index={index}>
@@ -24,8 +24,7 @@ export function WorkCard({ work, index }: { work: Work; index: number }) {
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => {
                     deleteWork(work.id)
                   }}
                 >

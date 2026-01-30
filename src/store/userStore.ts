@@ -1,68 +1,53 @@
 import { create } from "zustand"
+import type { Work } from "@/Schema/validateSchema"
+import { fetchWorks, addWork, updateWork, deleteWork } from "@/lib/api"
 
-export type Work = {
-  id: string
-  title: string
-  status: "todo" | "inprogress" | "done"
-  createdAt: string
-}
 
-type WorkState = {
+interface WorkState {
   works: Work[]
   loading: boolean
   error: string | null
 
   loadWorks: () => Promise<void>
-  addWork: (data: Omit<Work, "id" | "createdAt">) => Promise<void>
-  updateWork: (id: string, data: Partial<Work>) => Promise<void>
+  addWork: (title: string, status: Work["status"]) => Promise<void>
+  updateWork: (id: string, updates: Partial<Work>) => Promise<void>
   deleteWork: (id: string) => Promise<void>
 }
 
-const BASE = "/api/works"
-
-export const useWorkState = create<WorkState>((set) => ({
+export const useWorkStore = create<WorkState>((set) => ({
   works: [],
   loading: false,
   error: null,
 
   loadWorks: async () => {
-    set({ loading: true })
+    set({ loading: true, error: null })
     try {
-      const res = await fetch(BASE)
-      if (!res.ok) throw new Error("Fetch failed")
-      const data = await res.json()
-      set({ works: data, loading: false })
-    } catch {
-      set({ error: "Failed to load data", loading: false })
+      const works = await fetchWorks()
+      set({ works, loading: false })
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : 'Failed to load works', loading: false })
     }
   },
 
-  addWork: async (data) => {
-    const res = await fetch(BASE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+  addWork: async (title, status) => {
+    const work = await addWork({
+      title,
+      status,
     })
-    const work = await res.json()
     set((s) => ({ works: [...s.works, work] }))
   },
 
-  updateWork: async (id, data) => {
-    const res = await fetch(`${BASE}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-    const updated = await res.json()
+  updateWork: async (id, updates) => {
+    const updated = await updateWork(id, updates)
     set((s) => ({
-      works: s.works.map(w => w.id === id ? updated : w),
+      works: s.works.map((w) => (w.id === id ? updated : w)),
     }))
   },
 
   deleteWork: async (id) => {
-    await fetch(`${BASE}/${id}`, { method: "DELETE" })
+    await deleteWork(id)
     set((s) => ({
-      works: s.works.filter(w => w.id !== id),
+      works: s.works.filter((w) => w.id !== id),
     }))
   },
 }))

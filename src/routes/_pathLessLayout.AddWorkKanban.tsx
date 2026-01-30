@@ -1,5 +1,5 @@
 import { Outlet,createFileRoute } from '@tanstack/react-router'
-import AddWork from '@/components/AddTask/AddWork'
+import { AddWork } from '@/components/AddTask/AddWork'
 import { useState } from 'react' 
 //kanban
 import { KanbanBoard } from "@/components/AddTask/KanbanBoard";
@@ -34,10 +34,6 @@ function RouteComponent() {
     <h1 className='text-center m-1 text-2xl font-semibold font-mono'>Manage statuse of your Works without Notbook or pen📝</h1>
     <AddWork open={isDialogOpen} onOpenChange={setIsDialogOpen}/>
     <div className='border border-black p-4 mt-9 rounded-2xl'>
-      <div className="p-4 text-center">
-        <p>Loading Kanban Board...</p>
-        <p className="text-sm text-gray-500 mt-2">If this message persists, there might be an issue with the components.</p>
-      </div>
       <KanbanBoard />
     </div>
     <Outlet />

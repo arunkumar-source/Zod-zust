@@ -7,12 +7,12 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { useWorkState } from "@/store/userStore"
+import { useWorkStore } from "@/store/userStore"
 import { getStatusData, getDateData } from "@/lib/dashdata"
 
 
 export default function Dashboard() {
-  const works = useWorkState((s) => s.works)
+  const works = useWorkStore((s) => s.works)
 
   const status = getStatusData(works)
   const dateData = getDateData(works)
