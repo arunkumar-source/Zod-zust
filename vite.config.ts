@@ -23,7 +23,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api/': {
+      '/api': {
         target: 'https://workbackend-6yl2q0e0v-arun-kumars-projects-67b3a0ee.vercel.app/',
         changeOrigin: true,
         secure: true,
