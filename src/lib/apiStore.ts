@@ -1,38 +1,26 @@
-import type { Work } from "@/Schema/validateSchema"
+const API = "/api/works"
 
-const BASE_URL = "/api/works"
-
-export async function fetchWorks(): Promise<Work[]> {
-  const res = await fetch(BASE_URL)
-  if (!res.ok) {
-    throw new Error(`Failed to fetch works: ${res.status} ${res.statusText}`)
-  }
+export const fetchWorks = async () => {
+  const res = await fetch(API)
   return res.json()
 }
 
-export async function createWork(work: Pick<Work, "id" | "title" | "status">) {
-  const res = await fetch(BASE_URL, {
+export const addWork = async (work: any) => {
+  await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(work),
   })
-  return res.json()
 }
 
-export async function updateWork(
-  id: string,
-  updates: Partial<Work>
-) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "PATCH",
+export const updateWork = async (id: string, data: any) => {
+  await fetch(`${API}/${id}`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updates),
+    body: JSON.stringify(data),
   })
-  return res.json()
 }
 
-export async function deleteWork(id: string) {
-  await fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
-  })
+export const deleteWork = async (id: string) => {
+  await fetch(`${API}/${id}`, { method: "DELETE" })
 }

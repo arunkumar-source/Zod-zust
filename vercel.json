@@ -1,12 +1,5 @@
 {
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3.2.0"
-    }
-  },
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
+"framework": "vite",
+  "buildCommand": "pnpm build",
   "outputDirectory": "dist"
 }

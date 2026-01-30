@@ -12,42 +12,29 @@ interface WorkState {
   deleteWork: (id: string) => Promise<void>
 }
 
-export const useWorkState = create<WorkState>((set) => ({
+export const useWorkState = create((set) => ({
   works: [],
-  loading: false,
 
   loadWorks: async () => {
-    set({ loading: true })
-    try {
-      const works = await api.fetchWorks()
-      set({ works, loading: false })
-    } catch (error) {
-      console.error("Failed to load works:", error)
-      set({ works: [], loading: false })
-      throw error
-    }
+    const data = await api.fetchWorks()
+    set({ works: data })
   },
 
-  addWork: async (title, status) => {
-    const work = await api.createWork({
-      id: crypto.randomUUID(),
-      title,
-      status,
-    })
-    set((s) => ({ works: [...s.works, work] }))
+  addWork: async (title: string, status: Work["status"]) => {
+    await api.addWork({ title, status })
+    const data = await api.fetchWorks()
+    set({ works: data })
   },
 
-  updateWork: async (id, updates) => {
-    const updated = await api.updateWork(id, updates)
-    set((s) => ({
-      works: s.works.map((w) => (w.id === id ? updated : w)),
-    }))
+  updateWork: async (id: string, data: Partial<Work>) => {
+    await api.updateWork(id, data)
+    const works = await api.fetchWorks()
+    set({ works })
   },
 
-  deleteWork: async (id) => {
+  removeWork: async (id: string) => {
     await api.deleteWork(id)
-    set((s) => ({
-      works: s.works.filter((w) => w.id !== id),
-    }))
-  },
+    const works = await api.fetchWorks()
+    set({ works })
+  }
 }))

@@ -1,53 +1,37 @@
+// api/works.ts
 import { Hono } from "hono"
-import { cors } from "hono/cors"
 
-export type Status = "todo" | "inprogress" | "done"
-
-export type Work = {
+type Work = {
   id: string
   title: string
-  status: Status
-  createdAt: string
+  status: "todo" | "inprogress" | "done"
 }
 
-/* ---------- SERVER MEMORY ---------- */
-let works: Work[] = []
+const works: Work[] = [] // ⚠️ in-memory (resets on redeploy)
 
 const app = new Hono()
 
-app.use("*", cors())
-
-app.get("/", (c) => {
-  return c.json(works)
-})
+app.get("/", (c) => c.json(works))
 
 app.post("/", async (c) => {
-  const { title, status } = await c.req.json()
-  const work: Work = {
-    id: crypto.randomUUID(),
-    title,
-    status,
-    createdAt: new Date().toISOString(),
-  }
-  works.push(work)
-  return c.json(work, 201)
+  const body = await c.req.json()
+  works.push(body)
+  return c.json(body, 201)
 })
 
-app.patch("/:id", async (c) => {
+app.put("/:id", async (c) => {
   const id = c.req.param("id")
-  const updates = await c.req.json()
-
-  const work = works.find((w) => w.id === id)
-  if (!work) return c.notFound()
-
-  Object.assign(work, updates)
-  return c.json(work)
+  const body = await c.req.json()
+  const index = works.findIndex(w => w.id === id)
+  if (index !== -1) works[index] = { ...works[index], ...body }
+  return c.json(works[index])
 })
 
 app.delete("/:id", (c) => {
   const id = c.req.param("id")
-  works = works.filter((w) => w.id !== id)
-  return c.body(null, 204)
+  const index = works.findIndex(w => w.id === id)
+  if (index !== -1) works.splice(index, 1)
+  return c.json({ ok: true })
 })
 
 export default app
