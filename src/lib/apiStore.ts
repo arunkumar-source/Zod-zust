@@ -4,6 +4,9 @@ const BASE_URL = "/api/works"
 
 export async function fetchWorks(): Promise<Work[]> {
   const res = await fetch(BASE_URL)
+  if (!res.ok) {
+    throw new Error(`Failed to fetch works: ${res.status} ${res.statusText}`)
+  }
   return res.json()
 }
 

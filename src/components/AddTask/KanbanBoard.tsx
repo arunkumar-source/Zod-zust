@@ -1,7 +1,7 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
 import { useWorkState } from "@/store/userStore"
 import { KanbanColumn } from "./KanbanColoumn"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 
 
@@ -13,8 +13,18 @@ const COLUMNS = [
 
 export function KanbanBoard() {
   const { works, loadWorks, updateWork } = useWorkState()
+  const [error, setError] = useState<string | null>(null)
+  
   useEffect(() => {
-    loadWorks()
+    const loadData = async () => {
+      try {
+        await loadWorks()
+      } catch (err) {
+        console.error("Failed to load works:", err)
+        setError("Failed to load data. Please refresh the page.")
+      }
+    }
+    loadData()
   }, [])
 
 
@@ -24,6 +34,20 @@ export function KanbanBoard() {
     updateWork(result.draggableId, {
       status: result.destination.droppableId as any,
     })
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Refresh
+        </button>
+      </div>
+    )
   }
 
   return (

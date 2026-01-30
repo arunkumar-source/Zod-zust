@@ -18,8 +18,14 @@ export const useWorkState = create<WorkState>((set) => ({
 
   loadWorks: async () => {
     set({ loading: true })
-    const works = await api.fetchWorks()
-    set({ works, loading: false })
+    try {
+      const works = await api.fetchWorks()
+      set({ works, loading: false })
+    } catch (error) {
+      console.error("Failed to load works:", error)
+      set({ works: [], loading: false })
+      throw error
+    }
   },
 
   addWork: async (title, status) => {
