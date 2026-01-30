@@ -5,6 +5,10 @@
     {
       "source": "/api/(.*)",
       "destination": "https://workbackend-6yl2q0e0v-arun-kumars-projects-67b3a0ee.vercel.app/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
