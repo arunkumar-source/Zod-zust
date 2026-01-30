@@ -1,4 +1,3 @@
-// api/works.ts
 import { Hono } from "hono"
 
 type Work = {
@@ -8,37 +7,40 @@ type Work = {
   createdAt: string
 }
 
-const works: Work[] = [] 
+const works: Work[] = []
 
 const app = new Hono()
 
-app.get("/api/works", (c) => c.json(works))
+app.get("/", (c) => c.json(works))
 
-app.post("/api/works", async (c) => {
-  const { title, status } = await c.req.json()
+app.post("/", async (c) => {
+  const body = await c.req.json()
   const work: Work = {
     id: crypto.randomUUID(),
-    title,
-    status,
+    title: body.title,
+    status: body.status,
     createdAt: new Date().toISOString(),
   }
   works.push(work)
   return c.json(work, 201)
 })
 
-app.put("/api/works/:id", async (c) => {
+app.put("/:id", async (c) => {
   const id = c.req.param("id")
-  const body = await c.req.json()
+  const updates = await c.req.json()
   const index = works.findIndex(w => w.id === id)
-  if (index !== -1) works[index] = { ...works[index], ...body }
+  if (index === -1) return c.json({ message: "Not found" }, 404)
+  works[index] = { ...works[index], ...updates }
   return c.json(works[index])
 })
 
-app.delete("/api/works/:id", (c) => {
+app.delete("/:id", (c) => {
   const id = c.req.param("id")
   const index = works.findIndex(w => w.id === id)
-  if (index !== -1) works.splice(index, 1)
+  if (index === -1) return c.json({ message: "Not found" }, 404)
+  works.splice(index, 1)
   return c.json({ ok: true })
 })
 
 export default app
+

@@ -1,28 +1,27 @@
-const BASE_URL = "/api/works"
+const BASE = "/api/works"
 
-export async function fetchWorks() {
-  const res = await fetch(BASE_URL)
+export const fetchWorks = async () => {
+  const res = await fetch(BASE)
+  if (!res.ok) throw new Error("fetch failed")
   return res.json()
 }
 
-export async function addWork(data: { title: string; status: string }) {
-  await fetch(BASE_URL, {
+export const addWork = async (data: any) => {
+  await fetch(BASE, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
 }
 
-export async function updateWork(id: string, data: any) {
-  await fetch(`${BASE_URL}/${id}`, {
+export const updateWork = async (id: string, data: any) => {
+  await fetch(`${BASE}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
 }
 
-export async function deleteWork(id: string) {
-  await fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
-  })
+export const deleteWork = async (id: string) => {
+  await fetch(`${BASE}/${id}`, { method: "DELETE" })
 }

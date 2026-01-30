@@ -18,7 +18,7 @@ export function WorkCard({
       {(p) => (
         <div ref={p.innerRef} {...p.draggableProps}>
           <Card className="p-3 hover:bg-muted space-y-2">
-            
+
             {/* Drag handle ONLY */}
             <div
               {...p.dragHandleProps}
@@ -34,7 +34,11 @@ export function WorkCard({
               </EditWorkSheet>
               <Button
                 variant="destructive"
-                onClick={() => deleteWork(work.id)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  deleteWork(work.id)
+                }}
               >
                 Delete
               </Button>
