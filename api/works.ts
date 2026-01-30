@@ -8,13 +8,13 @@ type Work = {
   createdAt: string
 }
 
-const works: Work[] = [] // ⚠️ in-memory (resets on redeploy)
+const works: Work[] = [] 
 
 const app = new Hono()
 
-app.get("/", (c) => c.json(works))
+app.get("/api/works", (c) => c.json(works))
 
-app.post("/", async (c) => {
+app.post("/api/works", async (c) => {
   const { title, status } = await c.req.json()
   const work: Work = {
     id: crypto.randomUUID(),
@@ -26,7 +26,7 @@ app.post("/", async (c) => {
   return c.json(work, 201)
 })
 
-app.put("/:id", async (c) => {
+app.put("/api/works/:id", async (c) => {
   const id = c.req.param("id")
   const body = await c.req.json()
   const index = works.findIndex(w => w.id === id)
@@ -34,7 +34,7 @@ app.put("/:id", async (c) => {
   return c.json(works[index])
 })
 
-app.delete("/:id", (c) => {
+app.delete("/api/works/:id", (c) => {
   const id = c.req.param("id")
   const index = works.findIndex(w => w.id === id)
   if (index !== -1) works.splice(index, 1)

@@ -11,29 +11,30 @@ interface WorkState {
   updateWork: (id: string, updates: Partial<Work>) => Promise<void>
   deleteWork: (id: string) => Promise<void>
 }
-
 export const useWorkState = create<WorkState>((set) => ({
   works: [],
   loading: false,
 
   loadWorks: async () => {
+    set({ loading: true })
     const data = await api.fetchWorks()
-    set({ works: data })
+    set({ works: data, loading: false })
   },
 
-  addWork: async (title: string, status: Work["status"]) => {
+  addWork: async (title, status) => {
+    set({ loading: true })
     await api.addWork({ title, status })
     const data = await api.fetchWorks()
-    set({ works: data })
+    set({ works: data, loading: false })
   },
 
-  updateWork: async (id: string, data: Partial<Work>) => {
-    await api.updateWork(id, data)
+  updateWork: async (id, updates) => {
+    await api.updateWork(id, updates)
     const works = await api.fetchWorks()
     set({ works })
   },
 
-  deleteWork: async (id: string) => {
+  deleteWork: async (id) => {
     await api.deleteWork(id)
     const works = await api.fetchWorks()
     set({ works })

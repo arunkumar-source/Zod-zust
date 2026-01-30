@@ -30,10 +30,10 @@ export function KanbanBoard() {
   }, [])
 
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async(result: DropResult) => {
     if (!result.destination) return
 
-    updateWork(result.draggableId, {
+    await updateWork(result.draggableId, {
       status: result.destination.droppableId as any,
     })
   }
