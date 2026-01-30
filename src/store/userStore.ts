@@ -12,8 +12,9 @@ interface WorkState {
   deleteWork: (id: string) => Promise<void>
 }
 
-export const useWorkState = create((set) => ({
+export const useWorkState = create<WorkState>((set) => ({
   works: [],
+  loading: false,
 
   loadWorks: async () => {
     const data = await api.fetchWorks()
@@ -32,7 +33,7 @@ export const useWorkState = create((set) => ({
     set({ works })
   },
 
-  removeWork: async (id: string) => {
+  deleteWork: async (id: string) => {
     await api.deleteWork(id)
     const works = await api.fetchWorks()
     set({ works })

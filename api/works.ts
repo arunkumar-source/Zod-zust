@@ -5,6 +5,7 @@ type Work = {
   id: string
   title: string
   status: "todo" | "inprogress" | "done"
+  createdAt: string
 }
 
 const works: Work[] = [] // ⚠️ in-memory (resets on redeploy)
@@ -14,9 +15,15 @@ const app = new Hono()
 app.get("/", (c) => c.json(works))
 
 app.post("/", async (c) => {
-  const body = await c.req.json()
-  works.push(body)
-  return c.json(body, 201)
+  const { title, status } = await c.req.json()
+  const work: Work = {
+    id: crypto.randomUUID(),
+    title,
+    status,
+    createdAt: new Date().toISOString(),
+  }
+  works.push(work)
+  return c.json(work, 201)
 })
 
 app.put("/:id", async (c) => {
