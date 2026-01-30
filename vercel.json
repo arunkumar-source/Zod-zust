@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://workbackend-kw9gpatm1-arun-kumars-projects-67b3a0ee.vercel.app/api/$1"
+      "destination": "https://workbackend-kw9gpatm1-arun-kumars-projects-67b3a0ee.vercel.app/$1"
     },
     {
       "source": "/(.*)",
