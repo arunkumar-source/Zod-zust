@@ -1,6 +1,9 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
 import { useWorkState } from "@/store/userStore"
 import { KanbanColumn } from "./KanbanColoumn"
+import { useEffect } from "react"
+
+
 
 const COLUMNS = [
   { id: "todo", title: "Todo" },
@@ -9,8 +12,11 @@ const COLUMNS = [
 ] as const
 
 export function KanbanBoard() {
-  const works = useWorkState((s) => s.works)
-  const updateWork = useWorkState((s) => s.updatework)
+  const { works, loadWorks, updateWork } = useWorkState()
+  useEffect(() => {
+    loadWorks()
+  }, [])
+
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return

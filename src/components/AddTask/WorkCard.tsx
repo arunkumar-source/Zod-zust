@@ -12,7 +12,7 @@ export function WorkCard({
     work: Work
     index: number
 }) {
-    const deletework = useWorkState((s) => s.deletework)
+  const { deleteWork } = useWorkState()
   return (
     <Draggable draggableId={work.id} index={index}>
       {(p) => (
@@ -20,7 +20,7 @@ export function WorkCard({
           <EditWorkSheet work={work}>
             <Card className="p-3 cursor-pointer hover:bg-muted">
               <div>{work.title}</div>
-              <Button onClick={() => deletework(work.id)}>Delete</Button>
+              <Button onClick={() => deleteWork(work.id)} >Delete</Button>
             </Card>
           </EditWorkSheet>
         </div>

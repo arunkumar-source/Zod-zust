@@ -1,46 +1,47 @@
-import { create } from "zustand";
-import { type Work } from "@/Schema/validateSchema";
-import { storage } from "@/lib/storage ";
+import { create } from "zustand"
+import type { Work } from "@/Schema/validateSchema"
+import * as api from "@/lib/apiStore"
 
 interface WorkState {
-    works: Work[],
-    addwork: (title: string, status: Work["status"]) => void,
-    updatework: (id: string, updates: Partial<Work>) => void,
-    deletework: (id: string) => void
+  works: Work[]
+  loading: boolean
+
+  loadWorks: () => Promise<void>
+  addWork: (title: string, status: Work["status"]) => Promise<void>
+  updateWork: (id: string, updates: Partial<Work>) => Promise<void>
+  deleteWork: (id: string) => Promise<void>
 }
+
 export const useWorkState = create<WorkState>((set) => ({
-    works: storage.get(),
-    addwork: (title: string, status: Work["status"]) => {
-        set((state) => {
-            let ids = crypto.randomUUID()
-            const newWork: Work = {
-                id: ids,
-                title,
-                status,
-                createdAt: new Date().toISOString()
-            }
-            const update = [...state.works, newWork]
-            storage.set(update)
-            return { works: update }
-        })
-    },
-    updatework: (id: string, updates: Partial<Work>) => {
-        set((state) => {
-            const update = state.works.map(w => w.id === id ? { ...w, ...updates } : w)
-            storage.set(update)
-            return { works: update }
-        })
-    },
-    deletework: (id: string) => {
-        set((state) => {
-            const update = state.works.filter(w => w.id !== id)
-            storage.set(update)
-            return { works: update }
-        })
-    }
+  works: [],
+  loading: false,
 
+  loadWorks: async () => {
+    set({ loading: true })
+    const works = await api.fetchWorks()
+    set({ works, loading: false })
+  },
+
+  addWork: async (title, status) => {
+    const work = await api.createWork({
+      id: crypto.randomUUID(),
+      title,
+      status,
+    })
+    set((s) => ({ works: [...s.works, work] }))
+  },
+
+  updateWork: async (id, updates) => {
+    const updated = await api.updateWork(id, updates)
+    set((s) => ({
+      works: s.works.map((w) => (w.id === id ? updated : w)),
+    }))
+  },
+
+  deleteWork: async (id) => {
+    await api.deleteWork(id)
+    set((s) => ({
+      works: s.works.filter((w) => w.id !== id),
+    }))
+  },
 }))
-
-
-
-

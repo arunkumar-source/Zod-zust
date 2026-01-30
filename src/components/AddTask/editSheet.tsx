@@ -1,6 +1,9 @@
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Button } from "../ui/button"
@@ -17,28 +20,45 @@ export function EditWorkSheet({
   work: Work
   children: React.ReactNode
 }) {
-  const updateWork = useWorkState((s) => s.updatework)
+  const updateWork = useWorkState((s) => s.updateWork)
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState } = useForm({
     defaultValues: {
       title: work.title,
       status: work.status,
     },
   })
 
-  const onSubmit = handleSubmit((data) => {
-    updateWork(work.id, data)
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await updateWork(work.id, data)
+    } catch (error) {
+      console.error("Error updating work:", error)
+    }
   })
 
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
 
-      <SheetContent className="space-y-4">
-        <h3 className="font-semibold text-lg">Edit Work</h3>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit Work</SheetTitle>
+          <SheetDescription>Update the work item details</SheetDescription>
+        </SheetHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <Input {...register("title")} />
+        <form onSubmit={onSubmit} className="space-y-4 mt-4">
+          <Input 
+           {...register("title", { 
+              required: "Title is required",
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 characters long"
+              }
+           })} />
+          {formState.errors.title && (
+            <p className="text-red-500 text-sm">{formState.errors.title.message}</p>
+          )}
 
           <select
             {...register("status")}
@@ -49,7 +69,9 @@ export function EditWorkSheet({
             <option value="done">Done</option>
           </select>
 
-          <Button type="submit">Save</Button>
+          <Button type="submit" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? "Saving..." : "Save"}
+          </Button>
         </form>
       </SheetContent>
     </Sheet>

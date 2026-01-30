@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form"
 import { useWorkState } from "@/store/userStore";
 
 export default function AddWork({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const addworkstate = useWorkState((s) => s.addwork)
+  const addworkstate = useWorkState((s) => s.addWork)
   const form = useForm<{
     title: string;
     status: "todo" | "inprogress" | "done";
@@ -26,11 +26,18 @@ export default function AddWork({ open, onOpenChange }: { open: boolean; onOpenC
     defaultValues: { title: "", status: "todo" }
   })
 
-  const onSubmit = form.handleSubmit((data) => {
-    addworkstate(data.title, data.status)
-    onOpenChange(false)
-    form.reset()
-   
+  const onSubmit = form.handleSubmit(async (data) => {
+    try {
+      await addworkstate(data.title, data.status)
+      onOpenChange(false)
+      form.reset()
+    } catch (error) {
+      console.error("Error adding work:", error)
+    }
+  }, (errors) => {
+    if (errors.title) {
+      return errors
+    }
   })
   return (
     
@@ -40,13 +47,23 @@ export default function AddWork({ open, onOpenChange }: { open: boolean; onOpenC
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Add work here
-            <DialogDescription>To add in kanban board add here</DialogDescription>
-          </DialogTitle>
+          <DialogTitle>Add work here</DialogTitle>
+          <DialogDescription>To add in kanban board add here</DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
-          <Input {...form.register("title")} placeholder="Title" />
+          <Input 
+            {...form.register("title", { 
+              required: "Title is required",
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 characters long"
+              }
+            })} 
+            placeholder="Title" 
+          />
+          {form.formState.errors.title && (
+            <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
+          )}
 
           <select className="m-3" {...form.register("status")}>
             <option value="todo">Todo</option>
@@ -54,7 +71,9 @@ export default function AddWork({ open, onOpenChange }: { open: boolean; onOpenC
             <option value="done">Done</option>
           </select>
 
-          <Button type="submit">Add Work</Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Adding..." : "Add Work"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
