@@ -15,9 +15,12 @@ export function KanbanBoard() {
   const { works, loadWorks, updateWork } = useWorkState()
   const [error, setError] = useState<string | null>(null)
   
+  console.log("KanbanBoard rendering, works:", works) // Debug log
+  
   useEffect(() => {
     const loadData = async () => {
       try {
+        console.log("Loading works...") // Debug log
         await loadWorks()
       } catch (err) {
         console.error("Failed to load works:", err)
