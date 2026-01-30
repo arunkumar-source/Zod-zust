@@ -7,7 +7,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
   plugins: [
     devtools(),
     tanstackRouter({
@@ -31,5 +30,6 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
-  }
+  },
+  base: '/',
 })
