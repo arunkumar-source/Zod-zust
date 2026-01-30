@@ -4,7 +4,7 @@ import type { Work } from "@/Schema/validateSchema";
 const api=
   import.meta.env.DEV
     ? '/api'
-    : 'https://workbackend-9dn7m4s9s-arun-kumars-projects-67b3a0ee.vercel.app'
+    : 'https://workbackend-6yl2q0e0v-arun-kumars-projects-67b3a0ee.vercel.app/'
   ;
 
 // Fetch all works
