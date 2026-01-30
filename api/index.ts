@@ -51,3 +51,8 @@ app.delete("/works/:id", (c) => {
 })
 
 export default app
+
+// Vercel serverless function export
+export const config = {
+  runtime: 'nodejs18.x'
+}
