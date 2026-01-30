@@ -32,7 +32,7 @@ export const fetchWorks = async (): Promise<Work[]> => {
 // Add a new work
 export const addWork = async (data: { title: string; status: Work["status"] }): Promise<Work> => {
   try {
-    const response = await fetch(`${api}add`, {
+    const response = await fetch(`${api}/add`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ export const addWork = async (data: { title: string; status: Work["status"] }): 
 // Update a work
 export const updateWork = async (id: string, data: Partial<Work>): Promise<Work> => {
   try {
-    const response = await fetch(`${api}update/${id}`, {
+    const response = await fetch(`${api}/update/${id}`, {
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ export const updateWork = async (id: string, data: Partial<Work>): Promise<Work>
 // Delete a work
 export const deleteWork = async (id: string): Promise<void> => {
   try {
-    const response = await fetch(`${api}delete/${id}`, {
+    const response = await fetch(`${api}/delete/${id}`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json'
