@@ -1,11 +1,7 @@
 import type { Work } from "@/Schema/validateSchema";
 
 
-const api=
-  import.meta.env.DEV
-    ? '/api'
-    : 'https://workbackend-6yl2q0e0v-arun-kumars-projects-67b3a0ee.vercel.app/'
-  ;
+const api = "/api";
 
 // Fetch all works
 export const fetchWorks = async (): Promise<Work[]> => {
