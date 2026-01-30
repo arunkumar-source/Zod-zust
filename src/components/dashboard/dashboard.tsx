@@ -81,7 +81,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
 
         {/* DATE BAR */}
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={300}>
           <Card>
             <div className="p-4">
               <p className="font-medium mb-4">Works by Date</p>

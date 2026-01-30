@@ -11,7 +11,7 @@ export const Route = createFileRoute('/_pathLessLayout')({
 export function PathlessLayoutComponent() {
   return (
     <div>
-      <nav className=" sticky top-0 border-b bg-neutral-800 text-white w-full h-16 flex items-center ">
+      <nav className="border-b bg-neutral-800 text-white w-full h-16 flex items-center ">
         <NavigationMenu className="flex gap-4 px-4">
           <NavigationMenuList className="hover:bg-white hover:text-black   rounded">
             <Link to="/AddWorkKanban">Add Work</Link>
