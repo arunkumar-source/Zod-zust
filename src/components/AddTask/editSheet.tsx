@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
 
 import { useForm } from "react-hook-form"
-import {useWorkStore}  from "@/store/userStore"
+import { useUpdateWork } from "@/hooks/use-works"
 import {type Work} from "@/Schema/validateSchema"
 
 export function EditWorkSheet({
@@ -20,7 +20,7 @@ export function EditWorkSheet({
   work: Work
   children: React.ReactNode
 }) {
-  const updateWork = useWorkStore((s) => s.updateWork)
+  const { mutate: updateWork } = useUpdateWork()
 
   const { register, handleSubmit, formState } = useForm({
     defaultValues: {
@@ -31,7 +31,7 @@ export function EditWorkSheet({
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await updateWork(work.id, data)
+      await updateWork({ id: work.id, updates: data })
     } catch (error) {
       console.error("Error updating work:", error)
     }

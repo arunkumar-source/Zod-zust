@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form"
 
 //zustand store
-import { useWorkStore } from "@/store/userStore";
+import { useAddWork  } from "@/hooks/use-works";
 import type { Work } from "@/Schema/validateSchema";
 
 interface AddWorkProps {
@@ -25,14 +25,14 @@ interface AddWorkProps {
 }
 
 export function AddWork({ open, onOpenChange }: AddWorkProps) {
-  const { addWork } = useWorkStore();
+  const { mutate: addWork } = useAddWork();
   const form = useForm<{ title: string; status: Work["status"] }>({
     defaultValues: { title: "", status: "todo" }
   })
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      await addWork(data.title, data.status)
+      await addWork({ title: data.title, status: data.status })
       onOpenChange(false)
       form.reset()
     } catch (error) {

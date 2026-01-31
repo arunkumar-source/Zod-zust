@@ -1,7 +1,6 @@
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
-import { useWorkStore } from "@/store/userStore"
+import { useWorks, useUpdateWork } from "@/hooks/use-works"
 import { KanbanColumn } from "./KanbanColoumn"
-import { useEffect } from "react"
 
 const COLUMNS = [
   { id: "todo", title: "Todo" },
@@ -10,39 +9,44 @@ const COLUMNS = [
 ] as const
 
 export function KanbanBoard() {
-  const { works, error, loading, updateWork, loadWorks } = useWorkStore()
+  const { data: works = [], isLoading: loading, error } = useWorks()
+  const errorMessage = error?.message || "An error occurred in kanban board"
+  const { mutate: updateWork } = useUpdateWork()
 
-  useEffect(() => {
-    console.log("KanbanBoard mounted, loading works...")
-    loadWorks()
-  }, [loadWorks])
-
-  const onDragEnd = async(result: DropResult) => {
-   
-    
+  const onDragEnd = async (result: DropResult) => {
     if (!result.destination) {
       console.log("No destination, dropping outside")
       return
     }
 
     const { draggableId, destination, source } = result
+
+    // Don't do anything if dropped in the same position
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      console.log("Dropped in the same position")
+      return
+    }
+
+    console.log("Dragged item:", draggableId)
+    console.log("From:", source.droppableId, "To:", destination.droppableId)
+
+    // Find the work item being dragged
+    const work = works.find((w) => w.id === draggableId)
+    if (!work) {
+      console.error("Work item not found:", draggableId)
+      return
+    }
+
+    // Update the status based on the destination column
+    const newStatus = destination.droppableId as "todo" | "inprogress" | "done"
     
-    console.log(`Moving ${draggableId} from ${source.droppableId} to ${destination.droppableId}`)
-    
-    // Only update if the status actually changed
-    if (source.droppableId !== destination.droppableId) {
-      try {
-        console.log("Updating work status...")
-        await updateWork(draggableId, {
-          status: destination.droppableId as any,
-        })
-        console.log("Work status updated successfully")
-      } catch (error) {
-        console.error('Failed to update work status:', error)
-        // You could show a toast notification here
-      }
-    } else {
-      console.log("Same destination, no update needed")
+    // Only update if status has changed
+    if (work.status !== newStatus) {
+      console.log(`Updating work ${work.id} status from ${work.status} to ${newStatus}`)
+      updateWork({ 
+        id: work.id, 
+        updates: { status: newStatus } 
+      })
     }
   }
 
@@ -51,7 +55,7 @@ export function KanbanBoard() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading Kanban Board...</p>
+          {error && <div className="text-red-500">Error loading works: {errorMessage}</div>}
           <p className="text-sm text-gray-400 mt-1">Fetching your tasks</p>
         </div>
       </div>
@@ -68,9 +72,9 @@ export function KanbanBoard() {
             </svg>
           </div>
           <p className="text-red-600 font-medium mb-2">Failed to load tasks</p>
-          <p className="text-sm text-gray-500 mb-4">{error}</p>
+          <p className="text-sm text-gray-500 mb-4">{error.message}</p>
           <button 
-            onClick={() => loadWorks()} 
+            onClick={() => useWorks()} 
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             Try Again
