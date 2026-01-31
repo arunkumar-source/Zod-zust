@@ -5,7 +5,7 @@ const getApiBase = () => {
   if (import.meta.env.DEV) {
     return "/api"; // Use Vite proxy in development
   }
-  return "https://workbackend-kw9gpatm1-arun-kumars-projects-67b3a0ee.vercel.app"; // Direct URL in production
+  return "https://workbackend.vercel.app/"; // Direct URL in production
 };
 
 const api = getApiBase();
