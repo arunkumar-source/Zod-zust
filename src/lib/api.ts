@@ -9,7 +9,7 @@ export const fetchWorks = async (): Promise<Work[]> => {
 }
 
 export const addWork = async (data: Pick<Work, "title" | "status">) => {
-  const res = await fetch(`${API_URL}/works`, {
+  const res = await fetch(`${API_URL}works`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -19,7 +19,7 @@ export const addWork = async (data: Pick<Work, "title" | "status">) => {
 }
 
 export const updateWork = async (id: string, updates: Partial<Work>) => {
-  const res = await fetch(`${API_URL}/works/${id}`, {
+  const res = await fetch(`${API_URL}works/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updates),
@@ -29,7 +29,7 @@ export const updateWork = async (id: string, updates: Partial<Work>) => {
 }
 
 export const deleteWork = async (id: string) => {
-  const res = await fetch(`${API_URL}/works/${id}`, {
+  const res = await fetch(`${API_URL}works/${id}`, {
     method: "DELETE",
   })
   if (!res.ok) throw new Error("Failed to delete work")
