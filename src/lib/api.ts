@@ -19,7 +19,7 @@ export const addWork = async (data: Pick<Work, "title" | "status">) => {
 }
 
 export const updateWork = async (id: string, updates: Partial<Work>) => {
-  const res = await fetch(`${API_URL}update/${id}`, {
+  const res = await fetch(`${API_URL}/update/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updates),
@@ -29,7 +29,7 @@ export const updateWork = async (id: string, updates: Partial<Work>) => {
 }
 
 export const deleteWork = async (id: string) => {
-  const res = await fetch(`${API_URL}delete/${id}`, {
+  const res = await fetch(`${API_URL}/delete/${id}`, {
     method: "DELETE",
   })
   if (!res.ok) throw new Error("Failed to delete work")
