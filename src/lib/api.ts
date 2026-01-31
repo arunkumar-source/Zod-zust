@@ -1,6 +1,6 @@
 import type { Work } from "@/Schema/validateSchema"
 
-const API_URL = "https://workbackend.vercel.app/"
+const API_URL = "https://workbackend.vercel.app"
 
 export const fetchWorks = async (): Promise<Work[]> => {
   const res = await fetch(`${API_URL}/works`)
