@@ -1,11 +1,11 @@
 import type { Work } from "@/Schema/validateSchema";
 
-// Use different base URLs for development vs production
+
 const getApiBase = () => {
   if (import.meta.env.DEV) {
-    return "/api"; // Use Vite proxy in development
+    return "/api"; 
   }
-  return "https://workbackend.vercel.app/"; // Direct URL in production
+  return "https://workbackend.vercel.app/"; 
 };
 
 const api = getApiBase();
@@ -122,12 +122,19 @@ export const updateWork = async (id: string, data: Partial<Work>): Promise<Work>
   // In production, backend doesn't have update endpoint, so use fallback
   if (!import.meta.env.DEV) {
     console.warn('Backend does not support updating works. Using local fallback.');
+    
+    // Get the current work from localStorage or return a basic one
+    const existingWorks = JSON.parse(localStorage.getItem('workdash-storage') || '{}');
+    const currentWork = existingWorks.state?.works?.find((w: Work) => w.id === id);
+    
+    if (!currentWork) {
+      throw new Error(`Work with id ${id} not found`);
+    }
+    
     const updatedWork: Work = {
-      id,
-      title: "Updated Task",
-      status: data.status || "todo",
-      createdAt: new Date().toISOString(),
+      ...currentWork,
       ...data,
+      updatedAt: new Date().toISOString(),
     };
     return updatedWork;
   }
